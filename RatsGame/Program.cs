@@ -18,9 +18,17 @@ public class Game
 {
     public event EventHandler AddRat;
 
+
+    public event EventHandler DeleteRat;
+
     public virtual void OnAddRat(EventArgs e)
     {
         AddRat?.Invoke(this, e);
+    }
+
+    public virtual void OnDeleteRat(EventArgs e)
+    {
+        DeleteRat?.Invoke(this, e);
     }
 }
 
@@ -30,7 +38,7 @@ public class Rat : IDisposable
 
     public string Id { get; }
 
-    public int Attack { get; private set; } = 1;
+    public int Attack { get; private set; } = 0;
 
     public Rat(Game game, string id)
     {
@@ -38,18 +46,31 @@ public class Rat : IDisposable
         Id = id;
 
         game.AddRat += new EventHandler(Create);
-        game.OnAddRat(EventArgs.Empty);
+        game.DeleteRat += new EventHandler(Delete);
+
+    }
+    public void Add()
+    {
+        _game.OnAddRat(EventArgs.Empty);
+    }
+
+    public void Dispose()
+    {
+        _game.OnDeleteRat(EventArgs.Empty);
     }
 
     private void Create(object obj, EventArgs e)
     {
         Attack++;
+
+       // Console.WriteLine("Create  " + Id + " " + Attack);
     }
 
-    public void Dispose()
+    private void Delete(object obj, EventArgs e)
     {
         Attack--;
-        // todo
+
+       // Console.WriteLine("Delete  " + Id + " " + Attack);
     }
 }
 
@@ -62,10 +83,10 @@ public class Program
         var rat2 = new Rat(game, "rat2");
         var rat3 = new Rat(game, "rat3");
 
+        rat1.Add();
+        rat2.Add();
+        rat3.Add();
 
-        Console.WriteLine("Attack:" + rat1.Attack);
-        Console.WriteLine("Attack:" + rat2.Attack);
-        Console.WriteLine("Attack:" + rat3.Attack);
 
         ////////////////Test area (You are not allowed to use anything from this area)////////////////////////////
         TestAttackValueForAllRats(rat1, rat2, rat3);
@@ -73,6 +94,9 @@ public class Program
         rat3 = null;
         TestAttackValueForAllRats(rat1, rat2);
         ////////////////Test area (You are not allowed to use anything from this area)////////////////////////////
+        ///
+
+       
     }
 
     private static void TestAttackValueForAllRats(params Rat[] ratsInGame)

@@ -80,7 +80,9 @@ public class Program
         foreach (var rat in ratsInGame)
         {
             if (rat.Attack != ratsInGame.Length)
-          //      throw new Exception($"The rats do not have the same attack! Found rat {rat.Id} Attack = {rat.Attack} should be {ratsInGame.Length}");
+            {
+                throw new Exception($"The rats do not have the same attack! Found rat {rat.Id} Attack = {rat.Attack} should be {ratsInGame.Length}");
+            }
 
         }
 
